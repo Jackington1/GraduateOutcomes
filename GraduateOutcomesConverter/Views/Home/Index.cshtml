@@ -4,5 +4,33 @@
 
 <div class="text-center">
     <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">Please Upload An Excel File</a>.</p>
+    <p>Please Upload An Excel File.</p>
+    <input type="file" name="datafile" style="margin-left: 10px; margin-top: 15px; vertical-align: top; font-size:18px; background-color: white; margin-left:160px; margin-top:15px; width:250px; height:40px /">
 </div>
+
+<form method="post" enctype="multipart/form-data" asp-controller="Home" asp-action="FileUpload">
+<div class="form-group">
+    <div class="col-md-10">
+        <p>Please Upload An Excel File.</p>
+        <input type="file" name="files" multiple />
+    </div>
+</div>
+    <div class="form-group">
+        <div class="col-md-10">
+            <input type="submit" value="Upload" />
+        </div>
+    </div>
+</form>
+<form method="post" asp-controller="Home" asp-action="Log">
+    <div class="form-group">
+        <p>Read</p>
+        <input type="submit" value="Read" />
+    </div>
+</form>
+
+<form method="post" asp-controller="Home" asp-action="Convert">
+    <div class="form-group">
+        <p>Convert</p>
+        <input type="submit" value="Convert" />
+    </div>
+</form>
