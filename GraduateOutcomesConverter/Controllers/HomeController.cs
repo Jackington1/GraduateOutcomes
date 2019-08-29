@@ -117,7 +117,7 @@ namespace GraduateOutcomesConverter.Controllers
             var text = System.IO.File.ReadAllText(filepath);
             text = text.Replace("\t", ",");
             System.IO.File.WriteAllText(filepath, text);
-            TempData["filepath"] = filePath;
+            TempData["filepath"] = filepath;
 
 
             return Content(System.IO.File.ReadAllText(filepath));
