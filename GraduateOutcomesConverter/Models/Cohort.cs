@@ -49,4 +49,9 @@ namespace GraduateOutcomesConverter.Models
         public string FormattedTelNumber { get; set; }
         public string MatchMobileAndTelNo { get; set; }
     }
+
+    public class Links
+    {
+        public string fileLocation { get; set; }
+    }
 }

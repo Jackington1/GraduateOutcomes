@@ -40,6 +40,11 @@ namespace GraduateOutcomesConverter.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
+        //public static void SetLink(string link)
+        //{
+        //    FileUpload.filelink = link;
+        //}
+
         //public void OutputData(List<Cohort> data)
         //{
         //    string path = new StreamWriter(HttpContext.Current)
@@ -73,12 +78,14 @@ namespace GraduateOutcomesConverter.Controllers
             {
                 if(formFile.Length > 0)
                 {
-                    var filePath = Path.Combine(/*AppContext.BaseDirectory*/webroot, $"{Guid.NewGuid().ToString()}.csv"); /*Path.GetTempPath()+ Guid.NewGuid().ToString()+".txt";*/
+                    var filePath = Path.Combine(/*AppContext.BaseDirectory*/webroot, $"{Guid.NewGuid().ToString()}.txt"); /*Path.GetTempPath()+ Guid.NewGuid().ToString()+".txt";*/
                     filePaths.Add(filePath);
+                    TempData["filepath"] = filePath;
 
                     using (var stream = new FileStream(filePath, FileMode.Create, FileAccess.ReadWrite))
                     {
-                        await formFile.CopyToAsync(stream);
+                        await formFile.CopyToAsync(stream);                        
+
                     }
                 }
             }
@@ -96,21 +103,74 @@ namespace GraduateOutcomesConverter.Controllers
             return Content(text);
         }
 
+        public IActionResult FormatFile()
+        {
+            var webroot = _env.WebRootPath;
+            var filepath = TempData["filepath"].ToString();
+            //string[] reader = System.IO.File.ReadAllLines(Path.Combine(webroot, filepath));
+            //foreach (var line in reader)
+            //{            
+
+            //        System.IO.File.WriteAllLines(filepath, line.Replace("   ", ","));
+
+            //}
+            var text = System.IO.File.ReadAllText(filepath);
+            text = text.Replace("\t", ",");
+            System.IO.File.WriteAllText(filepath, text);
+            TempData["filepath"] = filePath;
+
+
+            return Content(System.IO.File.ReadAllText(filepath));
+        }
+
+
         public IActionResult Convert()
         {
             var webroot = _env.WebRootPath;
-            //using (var reader = new StreamReader("Output.txt"))
-            //{
-
-            //} //Cant find output file FIX
-            string[] reader = System.IO.File.ReadAllLines(Path.Combine(webroot, "Output.txt"));
+            var filepath = TempData["filepath"].ToString();
+            
+            string[] reader = System.IO.File.ReadAllLines(Path.Combine(webroot, filepath));
             XElement cust = new XElement("Root",
                 from str in reader
                 let fields = str.Split(',')
                 select new XElement("Student",
                 new XAttribute("HUSID", fields[0]),
                 new XElement("OWNSTU", fields[1]),
-                new XElement("Country", fields[2])
+                new XElement("Country", fields[2]),
+                new XElement("GOForenames", fields[3]),
+                new XElement("GOSurname", fields[4]),
+                new XElement("IsisForename", fields[5]),
+                new XElement("IsisSurname", fields[6]),
+                new XElement("FNameChange", fields[7]),
+                new XElement("SNameChange", fields[8]),
+                new XElement("GradStatus", fields[9]),
+                new XElement("UKMob", fields[10]),
+                new XElement("UKMob2", fields[11]),
+                new XElement("UKTel", fields[12]),
+                new XElement("UKTel2", fields[13]),
+                new XElement("IntTel", fields[14]),
+                new XElement("InteTel2", fields[15]),
+                new XElement("Email", fields[16]),
+                new XElement("Email2", fields[17]),
+                new XElement("PersonUrn", fields[18]),
+                new XElement("TblMasterFacultyCode", fields[19]),
+                new XElement("PrimaryDept", fields[20]),
+                new XElement("StudentNumber", fields[21]),
+                new XElement("TblAddStuDetailsCode", fields[22]),
+                new XElement("PrimaryTargetCode", fields[23]),
+                new XElement("PrimaryTargetName", fields[24]),
+                new XElement("IncomeStatusCode", fields[25]),
+                new XElement("EnrolmentStatusCode", fields[26]),
+                new XElement("MobileNumber", fields[27]),
+                new XElement("PersonalEmail", fields[28]),
+                new XElement("EmailAddress", fields[29]),
+                new XElement("TypeCode", fields[30]),
+                new XElement("TelephoneNumber", fields[31]),
+                new XElement("HesaReasonForLeavingCode", fields[32]),
+                new XElement("DateOfWithdrawal", fields[33]),
+                new XElement("HFormattedTelNumber", fields[34]),
+                new XElement("MatchMobileAndTelNo", fields[35])
+
                     )
                 );
 
