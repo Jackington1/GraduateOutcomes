@@ -95,34 +95,52 @@ namespace GraduateOutcomesConverter.Controllers
         [HttpPost]
         public IActionResult Log()
         {
-            var webRoot = _env.WebRootPath;
-            var filepath = TempData["filepath"].ToString();
-            var file = Path.Combine(webRoot, filepath);
-            //var lines = System.IO.File.ReadAllText()
-            var text = System.IO.File.ReadAllText(file);
-            TempData["filepath"] = filepath;
+            try
+            {
 
-            return Content(text);
+
+                var webRoot = _env.WebRootPath;
+                var filepath = TempData["filepath"].ToString();
+                var file = Path.Combine(webRoot, filepath);
+                //var lines = System.IO.File.ReadAllText()
+                var text = System.IO.File.ReadAllText(file);
+                TempData["filepath"] = filepath;
+
+                return Content(text);
+            }
+            catch
+            {
+                return Redirect("~/");
+            }
         }
 
         public IActionResult FormatFile()
         {
-            var webroot = _env.WebRootPath;
-            var filepath = TempData["filepath"].ToString();
-            //string[] reader = System.IO.File.ReadAllLines(Path.Combine(webroot, filepath));
-            //foreach (var line in reader)
-            //{            
-
-            //        System.IO.File.WriteAllLines(filepath, line.Replace("   ", ","));
-
-            //}
-            var text = System.IO.File.ReadAllText(filepath);
-            text = text.Replace("\t", ",");
-            System.IO.File.WriteAllText(filepath, text);
-            TempData["filepath"] = filepath;
+            try
+            {
 
 
-            return Content(System.IO.File.ReadAllText(filepath));
+                var webroot = _env.WebRootPath;
+                var filepath = TempData["filepath"].ToString();
+                //string[] reader = System.IO.File.ReadAllLines(Path.Combine(webroot, filepath));
+                //foreach (var line in reader)
+                //{            
+
+                //        System.IO.File.WriteAllLines(filepath, line.Replace("   ", ","));
+
+                //}
+                var text = System.IO.File.ReadAllText(filepath);
+                text = text.Replace("\t", ",");
+                System.IO.File.WriteAllText(filepath, text);
+                TempData["filepath"] = filepath;
+
+
+                return Content(System.IO.File.ReadAllText(filepath));
+            }
+            catch
+            {
+                return Redirect("~/");
+            }
         }
 
         public IActionResult Convert()
