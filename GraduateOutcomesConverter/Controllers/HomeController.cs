@@ -76,7 +76,7 @@ namespace GraduateOutcomesConverter.Controllers
             var filePaths = new List<string>();
             foreach (var formFile in files)
             {
-                if(formFile.Length > 0)
+                if (formFile.Length > 0)
                 {
                     var filePath = Path.Combine(/*AppContext.BaseDirectory*/webroot, $"{Guid.NewGuid().ToString()}.txt"); /*Path.GetTempPath()+ Guid.NewGuid().ToString()+".txt";*/
                     filePaths.Add(filePath);
@@ -84,21 +84,23 @@ namespace GraduateOutcomesConverter.Controllers
 
                     using (var stream = new FileStream(filePath, FileMode.Create, FileAccess.ReadWrite))
                     {
-                        await formFile.CopyToAsync(stream);                        
+                        await formFile.CopyToAsync(stream);
 
                     }
                 }
             }
-            return Ok(new { count = files.Count, size, filePaths });
+            return RedirectToAction("Index");//Ok(/*new { count = files.Count, size, filePaths }*/);
         }
 
         [HttpPost]
         public IActionResult Log()
         {
             var webRoot = _env.WebRootPath;
-            var file = Path.Combine(webRoot, "Output.txt");
+            var filepath = TempData["filepath"].ToString();
+            var file = Path.Combine(webRoot, filepath);
             //var lines = System.IO.File.ReadAllText()
             var text = System.IO.File.ReadAllText(file);
+            TempData["filepath"] = filepath;
 
             return Content(text);
         }
@@ -125,60 +127,65 @@ namespace GraduateOutcomesConverter.Controllers
 
         public IActionResult Convert()
         {
-            var webroot = _env.WebRootPath;
-            var filepath = TempData["filepath"].ToString();
+            try
+            {
+                var webroot = _env.WebRootPath;
+                var filepath = TempData["filepath"].ToString();
 
-            string[] reader = System.IO.File.ReadAllLines(Path.Combine(webroot, filepath));
-            XElement Record = new XElement("Records",
-                from str in reader
-                let fields = str.Split(',')
-                select new XElement("GraduateOutcomeRecord",
-                new XElement("Provider",
-                new XElement("RECID", "17071"),
-                new XElement("UKPRN", "10007164"),
-                new XElement("CENSUS", fields[0])),
-                new XElement("GRADUATE",
-                new XElement("HUSID", fields[1]),
-                new XElement("OWNSTU", fields[2]),
-                new XElement("COUNTRY", fields[3]),
-                new XElement("EMAIL", fields[4]),
-                new XElement("EMAIL2", fields[5]),
-                new XElement("EMAIL3", fields[6]),
-                new XElement("EMAIL4", fields[7]),
-                new XElement("EMAIL5", fields[8]),
-                new XElement("FNAMES", fields[9]),
-                new XElement("FNMECHNGE", fields[10]),
-                new XElement("GRADSTATUS", fields[11]),
-                new XElement("INTTEL", fields[12]),
-                new XElement("INTTEL2", fields[13]),
-                new XElement("INTTEL3", fields[14]),
-                new XElement("INTTEL4", fields[15]),
-                new XElement("INTTEL5", fields[16]),
-                new XElement("SNAMECHANGE", fields[17]),
-                new XElement("SURNAME", fields[18]),
-                new XElement("UKTEL", fields[19]),
-                new XElement("UKTEL2", fields[20]),
-                new XElement("UKTEL3", fields[21]),
-                new XElement("UKTEL4", fields[22]),
-                new XElement("UKTEL5", fields[23]),
-                new XElement("UKMOB", fields[24]),
-                new XElement("UKMOB2", fields[25]),
-                new XElement("UKMOB3", fields[26]),
-                new XElement("UKMOB4", fields[27]),
-                new XElement("UKMOB5", fields[28]))
-                )
-                
+                string[] reader = System.IO.File.ReadAllLines(Path.Combine(webroot, filepath));
+                XElement Record = new XElement("Records",
+                    from str in reader
+                    let fields = str.Split(',')
+                    select new XElement("GraduateOutcomeRecord",
+                    new XElement("Provider",
+                    new XElement("RECID", "17071"),
+                    new XElement("UKPRN", "10007164"),
+                    new XElement("CENSUS", fields[0])),
+                    new XElement("GRADUATE",
+                    new XElement("HUSID", fields[1]),
+                    new XElement("OWNSTU", fields[2]),
+                    new XElement("COUNTRY", fields[3]),
+                    new XElement("EMAIL", fields[4]),
+                    new XElement("EMAIL2", fields[5]),
+                    new XElement("EMAIL3", fields[6]),
+                    new XElement("EMAIL4", fields[7]),
+                    new XElement("EMAIL5", fields[8]),
+                    new XElement("FNAMES", fields[9]),
+                    new XElement("FNMECHNGE", fields[10]),
+                    new XElement("GRADSTATUS", fields[11]),
+                    new XElement("INTTEL", fields[12]),
+                    new XElement("INTTEL2", fields[13]),
+                    new XElement("INTTEL3", fields[14]),
+                    new XElement("INTTEL4", fields[15]),
+                    new XElement("INTTEL5", fields[16]),
+                    new XElement("SNAMECHANGE", fields[17]),
+                    new XElement("SURNAME", fields[18]),
+                    new XElement("UKTEL", fields[19]),
+                    new XElement("UKTEL2", fields[20]),
+                    new XElement("UKTEL3", fields[21]),
+                    new XElement("UKTEL4", fields[22]),
+                    new XElement("UKTEL5", fields[23]),
+                    new XElement("UKMOB", fields[24]),
+                    new XElement("UKMOB2", fields[25]),
+                    new XElement("UKMOB3", fields[26]),
+                    new XElement("UKMOB4", fields[27]),
+                    new XElement("UKMOB5", fields[28]))
+                    )
+                    );
 
-                );
-
-            return Content(Record.ToString());
+                return Content(Record.ToString());
+            }
+            catch (Exception)
+            {
+                return Redirect("~/");
+            }
         }
         /*Old*/
         //public IActionResult Convert()
         //{
         //    var webroot = _env.WebRootPath;
         //    var filepath = TempData["filepath"].ToString();
-            
+
         //    string[] reader = System.IO.File.ReadAllLines(Path.Combine(webroot, filepath));
         //    XElement cust = new XElement("Root",
         //        from str in reader
